@@ -55,8 +55,6 @@ func main() {
 		{"danielvladco", "go-proto-gql"},
 		{"ckaznocha", "protoc-gen-lint"},
 		{"envoyproxy", "protoc-gen-validate"},
-		{"stepancheg", "rust-protobuf"},
-		{"rust-lang", "rust"},
 		{"upx", "upx"},
 	} {
 		tag := "n/a"

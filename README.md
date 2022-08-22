@@ -21,8 +21,6 @@ An all batteries :battery: included `protoc` Docker image.
 - [grpc/grpc-web](https://github.com/grpc/grpc-web)
 - [protobuf-c/protobuf-c](https://github.com/protobuf-c/protobuf-c)
 - [pseudomuto/protoc-gen-doc](https://github.com/pseudomuto/protoc-gen-doc)
-- [stepancheg/grpc-rust](https://github.com/stepancheg/grpc-rust)
-- [stepancheg/rust-protobuf](https://github.com/stepancheg/rust-protobuf)
 - [chrusty/protoc-gen-jsonschema](https://github.com/chrusty/protoc-gen-jsonschema)
 - [moul/protoc-gen-gotemplate](https://github.com/moul/protoc-gen-gotemplate)
 
@@ -36,7 +34,6 @@ An all batteries :battery: included `protoc` Docker image.
 - JavaScript
 - PHP
 - Python
-- Rust
 
 ## Usage
 

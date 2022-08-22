@@ -1,7 +1,5 @@
 ARG ALPINE_VERSION
 ARG GO_VERSION
-ARG RUST_VERSION
-ARG NODE_VERSION
 
 
 FROM --platform=$BUILDPLATFORM tonistiigi/xx AS xx
@@ -156,38 +154,6 @@ WORKDIR /grpc-web
 RUN make -j$(nproc) install-plugin
 RUN install -Ds /usr/local/bin/protoc-gen-grpc-web /out/usr/bin/protoc-gen-grpc-web
 
-
-FROM rust:${RUST_VERSION}-alpine${ALPINE_VERSION} as rust_target
-COPY --from=xx / /
-WORKDIR /
-RUN mkdir -p /out
-RUN apk add --no-cache \
-        build-base \
-        curl
-
-
-FROM rust_target as protoc_gen_rust
-RUN mkdir -p /rust-protobuf
-ARG PROTOC_GEN_RUST_VERSION
-RUN curl -sSL https://api.github.com/repos/stepancheg/rust-protobuf/tarball/v${PROTOC_GEN_RUST_VERSION} | tar xz --strip 1 -C /rust-protobuf
-WORKDIR /rust-protobuf/protobuf-codegen
-RUN cargo build --release
-RUN install -Ds /rust-protobuf/target/release/protoc-gen-rust /out/usr/bin/protoc-gen-rust
-ARG TARGETPLATFORM
-RUN xx-verify /out/usr/bin/protoc-gen-rust
-
-
-FROM rust_target as grpc_rust
-RUN mkdir -p /grpc-rust
-ARG GRPC_RUST_VERSION
-RUN curl -sSL https://api.github.com/repos/stepancheg/grpc-rust/tarball/v${GRPC_RUST_VERSION} | tar xz --strip 1 -C /grpc-rust
-WORKDIR /grpc-rust/grpc-compiler
-RUN cargo build --release
-RUN install -Ds /grpc-rust/target/release/protoc-gen-rust-grpc /out/usr/bin/protoc-gen-rust-grpc
-ARG TARGETPLATFORM
-RUN xx-verify /out/usr/bin/protoc-gen-rust-grpc
-
-
 FROM --platform=$BUILDPLATFORM alpine:${ALPINE_VERSION} as alpine_host
 COPY --from=xx / /
 WORKDIR /
@@ -226,7 +192,6 @@ RUN if ! [ "${TARGETARCH}" = "arm64" ]; then curl -sSL https://github.com/upx/up
 RUN if ! [ "${TARGETARCH}" = "arm64" ]; then install -D /upx/upx /usr/local/bin/upx; fi
 COPY --from=googleapis /out/ /out/
 COPY --from=grpc_gateway /out/ /out/
-COPY --from=grpc_rust /out/ /out/
 COPY --from=grpc_web /out/ /out/
 COPY --from=protoc_gen_doc /out/ /out/
 COPY --from=protoc_gen_go /out/ /out/
@@ -236,7 +201,6 @@ COPY --from=protoc_gen_govalidators /out/ /out/
 COPY --from=protoc_gen_gql /out/ /out/
 COPY --from=protoc_gen_jsonschema /out/ /out/
 COPY --from=protoc_gen_lint /out/ /out/
-COPY --from=protoc_gen_rust /out/ /out/
 COPY --from=protoc_gen_validate /out/ /out/
 ARG TARGETARCH
 RUN <<EOF
@@ -265,13 +229,11 @@ RUN apk add glibc-2.35-r0.apk
 RUN rm -f glibc-2.35-r0.apk
 RUN ln -s /usr/bin/grpc_cpp_plugin /usr/bin/protoc-gen-grpc-cpp
 RUN ln -s /usr/bin/grpc_csharp_plugin /usr/bin/protoc-gen-grpc-csharp
-RUN ln -s /usr/bin/grpc_node_plugin /usr/bin/protoc-gen-grpc-js
 RUN ln -s /usr/bin/grpc_objective_c_plugin /usr/bin/protoc-gen-grpc-objc
 RUN ln -s /usr/bin/grpc_php_plugin /usr/bin/protoc-gen-grpc-php
 RUN ln -s /usr/bin/grpc_python_plugin /usr/bin/protoc-gen-grpc-python
 RUN ln -s /usr/bin/grpc_ruby_plugin /usr/bin/protoc-gen-grpc-ruby
 RUN ln -s /usr/bin/protoc-gen-go-grpc /usr/bin/protoc-gen-grpc-go
-RUN ln -s /usr/bin/protoc-gen-rust-grpc /usr/bin/protoc-gen-grpc-rust
 COPY protoc-wrapper /usr/bin/protoc-wrapper
 RUN mkdir -p /test
 RUN protoc-wrapper \
@@ -288,7 +250,6 @@ RUN protoc-wrapper \
         --grpc-php_out=/test \
         --grpc-python_out=/test \
         --grpc-ruby_out=/test \
-        --grpc-rust_out=/test \
         --grpc-web_out=import_style=commonjs,mode=grpcwebtext:/test \
         --js_out=import_style=commonjs:/test \
         --jsonschema_out=/test \
@@ -296,7 +257,6 @@ RUN protoc-wrapper \
         --php_out=/test \
         --python_out=/test \
         --ruby_out=/test \
-        --rust_out=/test \
         --validate_out=lang=go:/test \
         google/protobuf/any.proto
 ARG TARGETARCH
