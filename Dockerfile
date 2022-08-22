@@ -72,29 +72,6 @@ RUN go build -ldflags '-w -s' -o /golang-protobuf-out/protoc-gen-go ./cmd/protoc
 RUN install -D /golang-protobuf-out/protoc-gen-go /out/usr/bin/protoc-gen-go
 RUN xx-verify /out/usr/bin/protoc-gen-go
 
-
-FROM --platform=$BUILDPLATFORM go_host as protoc_gen_gogo
-RUN mkdir -p ${GOPATH}/src/github.com/gogo/protobuf
-ARG PROTOC_GEN_GOGO_VERSION
-RUN curl -sSL https://api.github.com/repos/gogo/protobuf/tarball/v${PROTOC_GEN_GOGO_VERSION} | tar xz --strip 1 -C ${GOPATH}/src/github.com/gogo/protobuf
-WORKDIR ${GOPATH}/src/github.com/gogo/protobuf
-RUN go mod download
-ARG TARGETPLATFORM
-RUN xx-go --wrap
-RUN go build -ldflags '-w -s' -o /gogo-protobuf-out/protoc-gen-gofast ./protoc-gen-gofast
-RUN go build -ldflags '-w -s' -o /gogo-protobuf-out/protoc-gen-gogo ./protoc-gen-gogo
-RUN go build -ldflags '-w -s' -o /gogo-protobuf-out/protoc-gen-gogofast ./protoc-gen-gogofast
-RUN go build -ldflags '-w -s' -o /gogo-protobuf-out/protoc-gen-gogofaster ./protoc-gen-gogofaster
-RUN go build -ldflags '-w -s' -o /gogo-protobuf-out/protoc-gen-gogoslick ./protoc-gen-gogoslick
-RUN go build -ldflags '-w -s' -o /gogo-protobuf-out/protoc-gen-gogotypes ./protoc-gen-gogotypes
-RUN go build -ldflags '-w -s' -o /gogo-protobuf-out/protoc-gen-gostring ./protoc-gen-gostring
-RUN install -D $(find /gogo-protobuf-out -name 'protoc-gen-*') -t /out/usr/bin
-RUN mkdir -p /out/usr/include/github.com/gogo/protobuf/protobuf/google/protobuf
-RUN install -D $(find ./protobuf/google/protobuf -name '*.proto') -t /out/usr/include/github.com/gogo/protobuf/protobuf/google/protobuf
-RUN install -D ./gogoproto/gogo.proto /out/usr/include/github.com/gogo/protobuf/gogoproto/gogo.proto
-RUN xx-verify /out/usr/bin/protoc-gen-gogo
-
-
 FROM --platform=$BUILDPLATFORM go_host as protoc_gen_gotemplate
 RUN mkdir -p ${GOPATH}/src/github.com/moul/protoc-gen-gotemplate
 ARG PROTOC_GEN_GOTEMPLATE_VERSION
@@ -254,7 +231,6 @@ COPY --from=grpc_web /out/ /out/
 COPY --from=protoc_gen_doc /out/ /out/
 COPY --from=protoc_gen_go /out/ /out/
 COPY --from=protoc_gen_go_grpc /out/ /out/
-COPY --from=protoc_gen_gogo /out/ /out/
 COPY --from=protoc_gen_gotemplate /out/ /out/
 COPY --from=protoc_gen_govalidators /out/ /out/
 COPY --from=protoc_gen_gql /out/ /out/
@@ -275,7 +251,7 @@ RUN find /out -name "*.a" -delete -or -name "*.la" -delete
 
 
 FROM alpine:${ALPINE_VERSION}
-LABEL maintainer="Roman Volosatovs <rvolosatovs@riseup.net>"
+LABEL maintainer="Sebastian Döll <sebastian.doell@ionos.com>"
 COPY --from=upx /out/ /
 RUN apk add --no-cache \
         bash\
@@ -322,9 +298,6 @@ RUN protoc-wrapper \
         --ruby_out=/test \
         --rust_out=/test \
         --validate_out=lang=go:/test \
-        google/protobuf/any.proto
-RUN protoc-wrapper \
-        --gogo_out=/test \
         google/protobuf/any.proto
 ARG TARGETARCH
 RUN if ! [ "${TARGETARCH}" = "arm64" ]; then apk add --no-cache grpc-java; fi

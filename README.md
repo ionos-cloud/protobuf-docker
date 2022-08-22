@@ -12,7 +12,6 @@ An all batteries :battery: included `protoc` Docker image.
 - [danielvladco/go-proto-gql](https://github.com/danielvladco/go-proto-gql)
 - [envoyproxy/protoc-gen-validate](https://github.com/envoyproxy/protoc-gen-validate)
 - [mwitkow/go-proto-validators](https://github.com/mwitkow/go-proto-validators)
-- [gogo/protobuf](https://github.com/gogo/protobuf)
 - [golang/protobuf](https://github.com/protocolbuffers/protobuf-go)
 - [google/protobuf](https://github.com/google/protobuf)
 - [grpc-ecosystem/grpc-gateway](https://github.com/grpc-ecosystem/grpc-gateway)

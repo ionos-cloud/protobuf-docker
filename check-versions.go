@@ -51,7 +51,6 @@ func main() {
 		{"pseudomuto", "protoc-gen-doc"},
 		{"grpc", "grpc-go"},
 		{"protocolbuffers", "protobuf-go"},
-		{"gogo", "protobuf"},
 		{"mwitkow", "go-proto-validators"},
 		{"danielvladco", "go-proto-gql"},
 		{"ckaznocha", "protoc-gen-lint"},
