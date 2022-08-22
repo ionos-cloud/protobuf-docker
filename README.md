@@ -1,11 +1,10 @@
 # Protocol Buffers + Docker
 
-![](https://github.com/ionos-cloud/protobuf-docker/workflows/Docker%20Image/badge.svg)
+[![Release](https://github.com/ionos-cloud/protobuf-docker/actions/workflows/release.yml/badge.svg)](https://github.com/ionos-cloud/protobuf-docker/actions/workflows/release.yml)
 
 > This is a fork of the awesome project [`rvolosatovs/docker-protobuf`](https://github.com/rvolosatovs/docker-protobuf)
 
-An all-inclusive `protoc` Docker image.
-It started out as https://github.com/znly/docker-protobuf fork, but grew into a stand-alone project.
+An all batteries :battery: included `protoc` Docker image.
 
 ## What's included
 
@@ -46,12 +45,19 @@ It started out as https://github.com/znly/docker-protobuf fork, but grew into a 
 
 ## Usage
 
-```
-$ docker run --rm -v<some-path>:<some-path> -w<some-path> rvolosatovs/protoc [OPTION] PROTO_FILES
+```bash
+docker run --rm -v<some-path>:<some-path> -w<some-path> ionos-cloud/protobuf-docker [OPTION] PROTO_FILES
 ```
 
 For help try:
 
+```bash
+docker run --rm ionos-cloud/protobuf-docker --help
 ```
-$ docker run --rm rvolosatovs/protoc --help
+
+Example usage:
+
+```bash
+dockedocker--rm -u $(id $(id-v$)PWD}:${PWD} -w${PWD} ghcr.io/ionos-cloud/protobuf-docker:latest --proto_path=$PWD
+    --go_out=${PWD}/gens --go_opt=paths=source_relative  -I/usr/include/github.com/gogo/protobuf ${PWD}/**/*.proto
 ```
