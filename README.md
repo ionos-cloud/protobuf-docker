@@ -58,6 +58,6 @@ docker run --rm ionos-cloud/protobuf-docker --help
 Example usage:
 
 ```bash
-dockedocker--rm -u $(id $(id-v$)PWD}:${PWD} -w${PWD} ghcr.io/ionos-cloud/protobuf-docker:latest --proto_path=$PWD
-    --go_out=${PWD}/gens --go_opt=paths=source_relative  -I/usr/include/github.com/gogo/protobuf ${PWD}/**/*.proto
+docker run --rm -u $(id -u) -v${PWD}:${PWD} -w${PWD} ghcr.io/ionos-cloud/protobuf-docker:latest --proto_path=${PWD} \
+    --go_out=${PWD} ${PWD}/**/*.proto
 ```
