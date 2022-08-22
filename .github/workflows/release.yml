@@ -36,7 +36,7 @@ jobs:
       id: docker_meta
       uses: docker/metadata-action@v3
       with:
-        images: ionos-cloud/protobuf-docker
+        images: ghcr.io/ionos-cloud/protobuf-docker
         tags: |
           type=raw,value=development,enable=${{ github.ref == 'refs/heads/main' }}
           type=semver,pattern={{version}}
