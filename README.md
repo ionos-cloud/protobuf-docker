@@ -18,7 +18,6 @@ An all batteries :battery: included `protoc` Docker image.
 - [grpc/grpc](https://github.com/grpc/grpc)
 - [grpc/grpc-go](https://github.com/grpc/grpc-go)
 - [grpc/grpc-java](https://github.com/grpc/grpc-java) (not on `arm64`)
-- [grpc/grpc-web](https://github.com/grpc/grpc-web)
 - [protobuf-c/protobuf-c](https://github.com/protobuf-c/protobuf-c)
 - [pseudomuto/protoc-gen-doc](https://github.com/pseudomuto/protoc-gen-doc)
 - [chrusty/protoc-gen-jsonschema](https://github.com/chrusty/protoc-gen-jsonschema)
@@ -31,7 +30,6 @@ An all batteries :battery: included `protoc` Docker image.
 - C++
 - Go
 - Java / JavaNano (Android)
-- JavaScript
 - PHP
 - Python
 
