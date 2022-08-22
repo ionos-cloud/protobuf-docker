@@ -1,7 +1,6 @@
 ARG ALPINE_VERSION
 ARG GO_VERSION
 ARG RUST_VERSION
-ARG SWIFT_VERSION
 ARG NODE_VERSION
 
 
@@ -212,47 +211,6 @@ ARG TARGETPLATFORM
 RUN xx-verify /out/usr/bin/protoc-gen-rust-grpc
 
 
-FROM swift:${SWIFT_VERSION} as grpc_swift
-RUN apt-get update
-RUN apt-get install -y \
-        build-essential \
-        curl \
-        libnghttp2-dev \
-        libssl-dev \
-        patchelf \
-        unzip \
-        zlib1g-dev
-ARG TARGETOS TARGETARCH GRPC_SWIFT_VERSION
-RUN <<EOF
-    mkdir -p /protoc-gen-swift
-    # Skip arm64 build due to https://forums.swift.org/t/build-crash-when-building-in-qemu-using-new-swift-5-6-arm64-image/56090/
-    # TODO: Remove this conditional once fixed
-    if [ "${TARGETARCH}" = "arm64" ]; then
-      echo "Skipping arm64 build due to error in Swift toolchain"
-      exit 0
-    fi
-    case ${TARGETARCH} in
-      "amd64")  SWIFT_LIB_DIR=/lib64 && SWIFT_LINKER=ld-${TARGETOS}-x86-64.so.2  ;;
-      "arm64")  SWIFT_LIB_DIR=/lib   && SWIFT_LINKER=ld-${TARGETOS}-aarch64.so.1 ;;
-      *)        echo "ERROR: Machine arch ${TARGETARCH} not supported." ;;
-    esac
-    mkdir -p /grpc-swift
-    curl -sSL https://api.github.com/repos/grpc/grpc-swift/tarball/${GRPC_SWIFT_VERSION} | tar xz --strip 1 -C /grpc-swift
-    cd /grpc-swift
-    make
-    make plugins
-    install -Ds /grpc-swift/protoc-gen-swift /protoc-gen-swift/protoc-gen-swift
-    install -Ds /grpc-swift/protoc-gen-grpc-swift /protoc-gen-swift/protoc-gen-grpc-swift
-    cp ${SWIFT_LIB_DIR}/${SWIFT_LINKER} \
-      $(ldd /protoc-gen-swift/protoc-gen-swift /protoc-gen-swift/protoc-gen-grpc-swift | awk '{print $3}' | grep /lib | sort | uniq) \
-      /protoc-gen-swift/
-    find /protoc-gen-swift/ -name 'lib*.so*' -exec patchelf --set-rpath /protoc-gen-swift {} \;
-    for p in protoc-gen-swift protoc-gen-grpc-swift; do
-      patchelf --set-interpreter /protoc-gen-swift/${SWIFT_LINKER} /protoc-gen-swift/${p}
-    done
-EOF
-
-
 FROM --platform=$BUILDPLATFORM alpine:${ALPINE_VERSION} as alpine_host
 COPY --from=xx / /
 WORKDIR /
@@ -290,7 +248,6 @@ ARG BUILDARCH BUILDOS UPX_VERSION
 RUN if ! [ "${TARGETARCH}" = "arm64" ]; then curl -sSL https://github.com/upx/upx/releases/download/v${UPX_VERSION}/upx-${UPX_VERSION}-${BUILDARCH}_${BUILDOS}.tar.xz | tar xJ --strip 1 -C /upx; fi
 RUN if ! [ "${TARGETARCH}" = "arm64" ]; then install -D /upx/upx /usr/local/bin/upx; fi
 COPY --from=googleapis /out/ /out/
-COPY --from=grpc_swift /protoc-gen-swift /out/protoc-gen-swift
 COPY --from=grpc_gateway /out/ /out/
 COPY --from=grpc_rust /out/ /out/
 COPY --from=grpc_web /out/ /out/
@@ -371,15 +328,11 @@ RUN protoc-wrapper \
         google/protobuf/any.proto
 ARG TARGETARCH
 RUN if ! [ "${TARGETARCH}" = "arm64" ]; then apk add --no-cache grpc-java; fi
-RUN if ! [ "${TARGETARCH}" = "arm64" ]; then ln -s /protoc-gen-swift/protoc-gen-grpc-swift /usr/bin/protoc-gen-grpc-swift; fi
-RUN if ! [ "${TARGETARCH}" = "arm64" ]; then ln -s /protoc-gen-swift/protoc-gen-swift /usr/bin/protoc-gen-swift; fi
 RUN <<EOF
     if ! [ "${TARGETARCH}" = "arm64" ]; then
         protoc-wrapper \
             --java_out=/test \
             --grpc-java_out=/test \
-            --grpc-swift_out=/test \
-            --swift_out=/test \
             google/protobuf/any.proto
     fi
 EOF

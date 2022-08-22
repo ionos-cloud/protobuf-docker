@@ -19,7 +19,6 @@ An all batteries :battery: included `protoc` Docker image.
 - [grpc/grpc](https://github.com/grpc/grpc)
 - [grpc/grpc-go](https://github.com/grpc/grpc-go)
 - [grpc/grpc-java](https://github.com/grpc/grpc-java) (not on `arm64`)
-- [grpc/grpc-swift](https://github.com/grpc/grpc-swift) (not on `arm64`, see https://github.com/rvolosatovs/docker-protobuf/issues/77 for potential issues)
 - [grpc/grpc-web](https://github.com/grpc/grpc-web)
 - [protobuf-c/protobuf-c](https://github.com/protobuf-c/protobuf-c)
 - [pseudomuto/protoc-gen-doc](https://github.com/pseudomuto/protoc-gen-doc)
@@ -36,12 +35,9 @@ An all batteries :battery: included `protoc` Docker image.
 - Go
 - Java / JavaNano (Android)
 - JavaScript
-- Objective-C
 - PHP
 - Python
-- Ruby
 - Rust
-- Swift
 
 ## Usage
 

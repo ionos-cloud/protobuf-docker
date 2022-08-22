@@ -47,7 +47,6 @@ func main() {
 		{"golang", "go"},
 		{"grpc-ecosystem", "grpc-gateway"},
 		{"stepancheg", "grpc-rust"},
-		{"grpc", "grpc-swift"},
 		{"grpc", "grpc-web"},
 		{"pseudomuto", "protoc-gen-doc"},
 		{"grpc", "grpc-go"},
@@ -59,7 +58,6 @@ func main() {
 		{"envoyproxy", "protoc-gen-validate"},
 		{"stepancheg", "rust-protobuf"},
 		{"rust-lang", "rust"},
-		{"apple", "swift"},
 		{"upx", "upx"},
 	} {
 		tag := "n/a"
