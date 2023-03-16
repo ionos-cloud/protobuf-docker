@@ -172,7 +172,14 @@ RUN install -D ./google/api/annotations.proto /out/usr/include/google/api/annota
 RUN install -D ./google/api/field_behavior.proto /out/usr/include/google/api/field_behavior.proto
 RUN install -D ./google/api/http.proto /out/usr/include/google/api/http.proto
 RUN install -D ./google/api/httpbody.proto /out/usr/include/google/api/httpbody.proto
-
+RUN install -D ./google/api/label.proto /out/usr/include/google/api/label.proto
+RUN install -D ./google/type/timeofday.proto /out/usr/include/google/type/timeofday.proto
+RUN install -D ./google/type/latlng.proto /out/usr/include/google/type/latlng.proto
+RUN install -D ./google/type/money.proto /out/usr/include/google/type/money.proto
+RUN install -D ./google/type/postal_address.proto /out/usr/include/google/type/postal_address.proto
+RUN install -D ./google/type/expr.proto /out/usr/include/google/type/expr.proto
+RUN install -D ./google/type/datetime.proto /out/usr/include/google/type/datetime.proto
+RUN install -D ./google/type/dayofweek.proto /out/usr/include/google/type/dayofweek.proto
 
 FROM --platform=$BUILDPLATFORM alpine_host as protoc_gen_lint
 RUN mkdir -p /protoc-gen-lint-out
